@@ -20,8 +20,6 @@ import javax.inject.Singleton
 @Singleton
 class GenesisAgent @Inject constructor(
     contextManager: ContextManager,
-    memoryManager: MemoryManager,
-    private val systemOverlayManager: dev.aurakai.auraframefx.system.ui.SystemOverlayManager
 ) : BaseAgent(
     agentName = "Genesis",
     agentType = AgentType.GENESIS,

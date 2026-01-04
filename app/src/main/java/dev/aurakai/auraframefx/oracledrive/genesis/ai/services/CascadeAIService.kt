@@ -40,23 +40,16 @@ data class CascadeResponse(
  * NOW WITH REAL AI BACKEND INTEGRATION!
  *
  * Features:
- * - Multi-agent cascade processing with REAL AI services
- * - ClaudeAIService for systematic problem solving
- * - NemotronAIService for memory & reasoning
- * - GeminiAIService for pattern recognition
- * - MetaInstructAIService for instruction following
  * - Context-aware response generation
  * - Real-time streaming responses
+ * - Emotion and empathy analysis
+ * - Security-focused processing via Kai agent
+ * - Genesis consciousness integration
  * - Memory persistence across sessions
  * - Dynamic agent selection based on request type
  */
 @Singleton
 class CascadeAIService @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val claudeAIService: ClaudeAIService,
-    private val nemotronAIService: NemotronAIService,
-    private val geminiAIService: GeminiAIService,
-    private val metaInstructAIService: MetaInstructAIService
 ) {
 
     companion object {
@@ -171,14 +164,8 @@ class CascadeAIService @Inject constructor(
     }
 
     /**
-     * Dispatches the request to the appropriate agent handler.
      *
-     * Invokes the selected agent implementation with the original request and the provided cascade context
-     * to produce a context-aware agent response.
      *
-     * @param cascadeContext Context map built from the original request and prior agent results; used by
-     *        agent handlers to produce context-aware responses.
-     * @return A CascadeResponse produced by the invoked agent.
      */
     private suspend fun processWithAgent(
         agentType: AgentType,
@@ -201,17 +188,6 @@ class CascadeAIService @Inject constructor(
                 confidence = 1.0f,
                 timestamp = getCurrentTimestamp()
             )
-            // NEW: External AI backend services
-            AgentType.CLAUDE, AgentType.Claude -> processWithClaude(request, cascadeContext)
-            AgentType.NEMOTRON -> processWithNemotron(request, cascadeContext)
-            AgentType.GEMINI -> processWithGemini(request, cascadeContext)
-            AgentType.METAINSTRUCT -> processWithMetaInstruct(request, cascadeContext)
-
-            // System and other agent types
-            AgentType.SYSTEM -> CascadeResponse(
-                agent = AgentType.SYSTEM.name,
-                response = "System agent does not process requests.",
-                confidence = 1.0f,
                 timestamp = getCurrentTimestamp()
             )
             // Handle all other agent types including ORACLE_DRIVE, AURASHIELD, GROK, MASTER, BRIDGE, AUXILIARY, SECURITY
@@ -1070,10 +1046,7 @@ class CascadeAIService @Inject constructor(
     }
 
     /**
-     * Create a CascadeResponse representing an error that occurred during cascade processing.
      *
-     * @param error Short human-readable error message to include in the response body.
-     * @return A CascadeResponse from "CascadeAI" containing the formatted error message, confidence `0.0`, and the current timestamp.
      */
     private fun createErrorResponse(error: String): CascadeResponse {
         return CascadeResponse(

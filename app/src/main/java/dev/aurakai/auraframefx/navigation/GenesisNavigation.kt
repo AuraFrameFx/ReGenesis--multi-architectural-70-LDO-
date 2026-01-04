@@ -11,9 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-// import dev.aurakai.auraframefx.aura.ui.AIChatScreen // DEPRECATED: Use DirectChatScreen instead
 import dev.aurakai.auraframefx.aura.ui.AgentNexusScreen
 import dev.aurakai.auraframefx.aura.ui.AppBuilderScreen
+import dev.aurakai.auraframefx.aura.ui.CanvasScreen
 import dev.aurakai.auraframefx.aura.ui.ConferenceRoomScreen
 import dev.aurakai.auraframefx.aura.ui.ConsciousnessVisualizerScreen
 import dev.aurakai.auraframefx.aura.ui.FirewallScreen
@@ -27,9 +27,7 @@ import dev.aurakai.auraframefx.aura.ui.XhancementScreen
 import dev.aurakai.auraframefx.billing.SubscriptionViewModel
 import dev.aurakai.auraframefx.oracledrive.genesis.cloud.OracleDriveScreen
 import dev.aurakai.auraframefx.ui.customization.GyroscopeCustomizationScreen
-// import dev.aurakai.auraframefx.ui.gates.AgentHubScreen // REMOVED: Was placeholder, using AgentHubSubmenuScreen instead
 import dev.aurakai.auraframefx.ui.gates.AgentMonitoringScreen
-import dev.aurakai.auraframefx.ui.gates.InstantColorPickerScreen
 import dev.aurakai.auraframefx.ui.gates.CodeAssistScreen
 import dev.aurakai.auraframefx.ui.gates.DirectChatScreen
 import dev.aurakai.auraframefx.ui.gates.GateNavigationScreen
@@ -50,11 +48,11 @@ import dev.aurakai.auraframefx.ui.gates.StatusBarScreen
 import dev.aurakai.auraframefx.ui.gates.SupportChatViewModel
 import dev.aurakai.auraframefx.ui.gates.SystemJournalScreen
 import dev.aurakai.auraframefx.ui.gates.TaskAssignmentScreen
+import dev.aurakai.auraframefx.ui.gates.ThemeEngineScreen
 import dev.aurakai.auraframefx.ui.gates.UIUXGateSubmenuScreen
 import dev.aurakai.auraframefx.ui.onboarding.GenderSelectionScreen
 import dev.aurakai.auraframefx.ui.screens.EvolutionTreeScreen
 import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
-import collabcanvas.ui.CanvasScreen as CollabCanvasScreen
 import dev.aurakai.auraframefx.ui.gates.AuraLabScreen
 import dev.aurakai.auraframefx.ui.gates.AgentHubSubmenuScreen
 import dev.aurakai.auraframefx.ui.gates.XposedQuickAccessPanel
@@ -201,24 +199,12 @@ fun GenesisNavigationHost(
                     onNavigateToAgents = {}
                 )
             }
-            composable(GenesisRoutes.AI_CHAT) {
-                // Use DirectChatScreen (unified AI chat implementation)
-                val viewModel = hiltViewModel<AgentViewModel>()
-                with(viewModel) {
-                    DirectChatScreen { navController.popBackStack() }
-                }
-            }
 
             // Gate routes with REAL screens
-            // AGENT_HUB route is defined later (line 232) with AgentHubSubmenuScreen
             composable(GenesisRoutes.AURAS_LAB) {
                 AuraLabScreen(onNavigateBack = { navController.popBackStack() })
             }
             composable(GenesisRoutes.ORACLE_DRIVE) {
-                OracleDriveScreen(navController = navController)
-            }
-            composable(GenesisRoutes.NEURAL_ARCHIVE) {
-                NeuralArchiveScreen(navController = navController)
             }
             composable(GenesisRoutes.ROM_TOOLS) {
                 ROMToolsSubmenuScreen(navController = navController)
@@ -246,10 +232,8 @@ fun GenesisNavigationHost(
                 HelpDeskSubmenuScreen(navController = navController)
             }
             composable(GenesisRoutes.COLLAB_CANVAS) {
-                CollabCanvasScreen(onBack = { navController.popBackStack() })
             }
             composable("collab_canvas") {
-                CollabCanvasScreen(onBack = { navController.popBackStack() })
             }
             composable(GenesisRoutes.CHROMA_CORE) {
                 UIUXGateSubmenuScreen(navController = navController)
@@ -258,10 +242,6 @@ fun GenesisNavigationHost(
                 UIUXGateSubmenuScreen(navController = navController)
             }
             composable("chromacore_colors") {
-                InstantColorPickerScreen(onNavigateBack = { navController.popBackStack() })
-            }
-            composable("instant_color_picker") {
-                InstantColorPickerScreen(onNavigateBack = { navController.popBackStack() })
             }
             composable(GenesisRoutes.FIREWALL) {
                 FirewallScreen()
@@ -284,7 +264,7 @@ fun GenesisNavigationHost(
             composable("sphere_grid") {
                 SphereGridScreen(navController = navController)
             }
-            
+
             // CONSTELLATION SCREENS - Agent Advancement Visualizations
             composable("constellation") {
                 ConstellationScreen(navController = navController)

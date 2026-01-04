@@ -8,12 +8,6 @@ import dagger.hilt.components.SingletonComponent
 /**
  * Module for AI service bindings.
  *
- * Provides ALL Genesis AI Services:
- * - Legacy services (Aura, Kai, Cascade)
- * - NEW external AI backends (Claude, Nemotron, Gemini, MetaInstruct)
- *
- * All services are @Singleton with @Inject constructors, so Hilt auto-provides them.
- * This module explicitly declares them for clarity and future interface bindings.
  */
 import dagger.Binds
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.ClaudeAIService
@@ -23,9 +17,6 @@ import dev.aurakai.auraframefx.oracledrive.genesis.ai.NemotronAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.services.AuraAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.services.DefaultAuraAIService
 import dev.aurakai.auraframefx.oracledrive.genesis.ai.services.KaiAIService
-import dev.aurakai.auraframefx.oracledrive.genesis.ai.services.GenesisBackedKaiAIService
-import dev.aurakai.auraframefx.services.RealCascadeAIServiceAdapter
-import dev.aurakai.auraframefx.services.CascadeAIService
 import javax.inject.Singleton
 
 @Module
@@ -53,7 +44,6 @@ abstract class AiServiceModule {
      */
     @Binds
     @Singleton
-    abstract fun bindKaiAIService(impl: GenesisBackedKaiAIService): KaiAIService
 
     /**
      * Binds the CascadeAIService interface to its RealCascadeAIServiceAdapter implementation in the DI graph.
@@ -63,7 +53,6 @@ abstract class AiServiceModule {
      */
     @Binds
     @Singleton
-    abstract fun bindCascadeAIService(impl: RealCascadeAIServiceAdapter): CascadeAIService
 
     // ═══════════════════════════════════════════════════════════════════════════
     // External AI Backend Services (ClaudeAIService, NemotronAIService,

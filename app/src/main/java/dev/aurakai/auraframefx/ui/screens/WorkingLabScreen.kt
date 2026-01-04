@@ -205,7 +205,6 @@ fun WorkingLabScreen(
             // Top left - Collab Canvas
             InteractiveModuleCard(
                 module = AuraKaiModules.CollabCanvas,
-                cardPosition = cardPositions["collab_canvas"] ?: DpOffset.Zero,
                 characterPosition = if (auraTargetCard == "collab_canvas") auraPosition else null,
                 character = if (auraTargetCard == "collab_canvas") Character.AURA else null,
                 workAction = if (auraTargetCard == "collab_canvas") auraWorkAction else null,
@@ -218,7 +217,6 @@ fun WorkingLabScreen(
             // Top right - Cloud Save
             InteractiveModuleCard(
                 module = AuraKaiModules.OracleDrive,
-                cardPosition = cardPositions["oracle_drive"] ?: DpOffset.Zero,
                 characterPosition = if (kaiTargetCard == "oracle_drive") kaiPosition else null,
                 character = if (kaiTargetCard == "oracle_drive") Character.KAI else null,
                 workAction = if (kaiTargetCard == "oracle_drive") kaiWorkAction else null,
@@ -231,7 +229,6 @@ fun WorkingLabScreen(
             // Bottom left - Console
             InteractiveModuleCard(
                 module = AuraKaiModules.Console,
-                cardPosition = cardPositions["console"] ?: DpOffset.Zero,
                 characterPosition = if (auraTargetCard == "console") auraPosition else null,
                 character = if (auraTargetCard == "console") Character.AURA else null,
                 workAction = if (auraTargetCard == "console") auraWorkAction else null,
@@ -244,7 +241,6 @@ fun WorkingLabScreen(
             // Bottom right - ROM Tools
             InteractiveModuleCard(
                 module = AuraKaiModules.ROMTools,
-                cardPosition = cardPositions["romtools"] ?: DpOffset.Zero,
                 characterPosition = if (kaiTargetCard == "romtools") kaiPosition else null,
                 character = if (kaiTargetCard == "romtools") Character.KAI else null,
                 workAction = if (kaiTargetCard == "romtools") kaiWorkAction else null,
@@ -291,17 +287,10 @@ fun WorkingLabScreen(
         }
 
         // Data stream between Aura and Kai when both at center
-        if (auraTargetCard == "center" && kaiTargetCard == "center") {
-            auraPosition?.let { auraPos ->
-                kaiPosition?.let { kaiPos ->
-                    DataStreamBetweenCards(
-                        fromPosition = auraPos,
-                        toPosition = kaiPos,
-                        color = Color(0xFFFF00FF),
-                        active = true
-                    )
-                }
-            }
+            DataStreamBetweenCards(
+                color = Color(0xFFFF00FF),
+                active = true
+            )
         }
     }
 }

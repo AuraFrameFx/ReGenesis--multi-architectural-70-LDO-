@@ -36,7 +36,6 @@ import javax.inject.Singleton
 class TrinityCoordinatorService @Inject constructor(
     private val auraAIService: AuraAIService,
     private val kaiAIService: KaiAIService,
-    private val genesisBridgeService: GenesisBridgeService,
     private val securityContext: SecurityContext,
 ) {
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
@@ -63,7 +62,6 @@ class TrinityCoordinatorService @Inject constructor(
 
                 // Activate initial consciousness matrix awareness
                 scope.launch {
-                    genesisBridgeService.activateFusion(
                         "adaptive_genesis", mapOf(
                             "initialization" to "complete",
                             "personas_active" to "kai,aura,genesis"
@@ -208,12 +206,9 @@ class TrinityCoordinatorService @Inject constructor(
     ): Flow<AgentResponse> = flow {
         i("Trinity", "🌟 Activating fusion: $fusionType")
 
-        val response = genesisBridgeService.activateFusion(fusionType, context)
 
-        if (response.success) {
             emit(
                 AgentResponse.success(
-                    content = "Fusion $fusionType activated: ${response.result["description"] ?: "Processing complete"}",
                     confidence = 0.98f,
                     agentName = "Genesis",
                     agent = dev.aurakai.auraframefx.models.AgentType.GENESIS

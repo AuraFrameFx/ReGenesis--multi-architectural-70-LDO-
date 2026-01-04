@@ -181,11 +181,9 @@ fun DirectChatScreen(
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    selectedAgent.value?.let { agent ->
                         Card(
                             modifier = Modifier.size(32.dp),
                             colors = CardDefaults.cardColors(
-                                containerColor = agent.color.copy(alpha = 0.3f)
                             ),
                             shape = CircleShape
                         ) {
@@ -194,9 +192,7 @@ fun DirectChatScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = agent.name.first().toString(),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = agent.color,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
@@ -206,13 +202,11 @@ fun DirectChatScreen(
 
                         Column {
                             Text(
-                                text = "Chat with ${agent.name}",
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = agent.specialAbility,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.White.copy(alpha = 0.6f)
                             )
@@ -257,10 +251,8 @@ fun DirectChatScreen(
 
                     IconButton(
                         onClick = {
-                            if (currentMessage.value.isNotBlank()) {
-                                selectedAgent.value?.name?.let { agentName ->
-                                    val message = currentMessage.value
-                                    currentMessage.value = ""
+                                val message = currentMessage.value
+                                currentMessage.value = ""
 
                                     // Send message through ViewModel for intelligent response
                                     viewModel.sendMessage(agentName, message)

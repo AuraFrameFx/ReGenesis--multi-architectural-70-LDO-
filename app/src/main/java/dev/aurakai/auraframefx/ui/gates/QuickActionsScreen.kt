@@ -232,13 +232,9 @@ fun QuickActionsScreen() {
         val categories = actions.groupBy { it.category }
 
         categories.forEach { (category, categoryActions) ->
-            Text(
-                text = category,
-                modifier = Modifier.padding(vertical = 16.dp),
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
+                    modifier = Modifier.padding(vertical = 16.dp),
+                    color = Color.White,
+                )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),

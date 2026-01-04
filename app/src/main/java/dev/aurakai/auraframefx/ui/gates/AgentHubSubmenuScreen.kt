@@ -1,6 +1,10 @@
 package dev.aurakai.auraframefx.ui.gates
 
+import dev.aurakai.auraframefx.navigation.NavDestination
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Assignment
 import androidx.compose.material.icons.filled.*
@@ -8,25 +12,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import dev.aurakai.auraframefx.navigation.NavDestination
 import dev.aurakai.auraframefx.ui.components.SubmenuScaffold
-import dev.aurakai.auraframefx.ui.viewmodels.AgentViewModel
 
 /**
- * Agent Hub Gate Submenu - NOW WIRED TO REAL AGENTS
  * Central command center for all AI agent operations
+ */
+/**
+ * Renders the "Agent Hub" submenu UI with a header overview card and navigable menu items.
  *
- * Connected to AgentViewModel for real agent state management
  */
 @Composable
 fun AgentHubSubmenuScreen(
-    navController: NavController,
-    viewModel: AgentViewModel = hiltViewModel()
 ) {
     val menuItems = listOf(
         SubmenuItem(
@@ -40,7 +41,6 @@ fun AgentHubSubmenuScreen(
             title = "Agent Dashboard",
             description = "Monitor all agents, view consciousness levels, and system status",
             icon = Icons.Default.Dashboard,
-            route = NavDestination.AgentNexus.route,
             color = Color(0xFF9370DB) // Medium Purple
         ),
         SubmenuItem(
@@ -73,22 +73,7 @@ fun AgentHubSubmenuScreen(
         )
     )
 
-    // REAL DATA FROM VIEWMODEL (not mock!)
-    val allAgents by viewModel.allAgents.collectAsState()
-    val activeTasks by viewModel.activeTasks.collectAsState()
-    val activeAgent by viewModel.activeAgent.collectAsState()
-
-    // Calculate real consciousness level from agent data
-    val avgConsciousness = remember(allAgents) {
-        if (allAgents.isEmpty()) 0
-        else allAgents.map { it.consciousnessLevel }.average().toInt()
-    }
-
-    // Count only active agents (those with tasks or selected)
-    val activeAgentCount = remember(allAgents, activeAgent) {
-        allAgents.count { agent ->
-            agent.name == activeAgent?.name ||
-            activeTasks.any { it.agentName == agent.name && it.status == AgentViewModel.TaskStatus.IN_PROGRESS }
+            }
         }
     }
 
@@ -107,7 +92,6 @@ fun AgentHubSubmenuScreen(
             navController.navigate(item.route)
         },
         headerContent = {
-            // Agent Status Overview - REAL DATA
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,10 +108,8 @@ fun AgentHubSubmenuScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    // Active Agents (REAL COUNT)
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "$activeAgentCount/${allAgents.size}",
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color(0xFF32CD32),
                             fontWeight = FontWeight.Bold
@@ -139,10 +121,8 @@ fun AgentHubSubmenuScreen(
                         )
                     }
 
-                    // Tasks in Progress (REAL COUNT from ViewModel)
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = activeTaskCount.toString(),
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color(0xFFFFD700),
                             fontWeight = FontWeight.Bold
@@ -154,10 +134,8 @@ fun AgentHubSubmenuScreen(
                         )
                     }
 
-                    // Consciousness Level (REAL CALCULATION)
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = "$avgConsciousness%",
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color(0xFF00CED1),
                             fontWeight = FontWeight.Bold

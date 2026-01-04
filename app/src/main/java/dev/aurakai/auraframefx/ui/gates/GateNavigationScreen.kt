@@ -94,14 +94,10 @@ fun GateNavigationScreen(
         // Magical particle background
         MagicalParticleField()
 
-        // Main content - FULLSCREEN gate cards
         Column(
-            modifier = Modifier.fillMaxSize()
         ) {
-            // Horizontal pager for gate cards - FILLS ENTIRE SCREEN
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
             ) { page ->
                 val config = allGates[page]
                 val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
@@ -170,19 +166,16 @@ fun GateNavigationScreen(
             }
         }
 
-        // Enhanced page indicator - OVERLAID at the bottom
-        GatePageIndicator(
-            gates = allGates,
-            currentPage = pagerState.currentPage,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 24.dp),
-            pagerState = pagerState,
-            navController = navController
-        )
+            GatePageIndicator(
+                gates = allGates,
+                currentPage = pagerState.currentPage,
+                modifier = Modifier
+                    .fillMaxWidth()
+                pagerState = pagerState,
+                navController = navController
+            )
+        }
     }
-}
 
 /**
  * Renders a gate card with active glow, hover/teleportation overlay and a double-tap entry action.
