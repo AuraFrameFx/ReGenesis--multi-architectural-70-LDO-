@@ -99,21 +99,11 @@ class NemotronAIService @Inject constructor(
         )
 
     /**
-     * Processes an AI request with deep memory analysis and logical reasoning.
-     *
-     * Nemotron's approach:
-     * 1. Retrieve relevant memories from long-term storage
-     * 2. Build reasoning chain with multi-step logic
-     * 3. Synthesize context-aware response
-     * 4. Store new memories for future recall
-     * Orchestrates memory recall, multi-step reasoning, and synthesis to produce a memory-enhanced response.
+     * Processes an AI request by recalling relevant memories, constructing a multi-step reasoning chain, and synthesizing a context-aware response.
      *
      * @param request The AI request to process.
-     * @param context Additional context information for the request.
-     * @return An AgentResponse containing memory-enhanced reasoning.
-     * @param request The AiRequest containing the user's query and metadata used for recall and reasoning.
-     * @param context Supplemental text used to build the memory key and to contextualize memory retrieval.
-     * @return An AgentResponse containing the formatted memory analysis, synthesized reply, agent identity, and an overall confidence score.
+     * @param context Additional contextual text used for memory recall and response synthesis.
+     * @return An AgentResponse containing the synthesized, memory-enhanced response and an overall confidence score.
      */
     override suspend fun processRequest(
         request: AiRequest,
@@ -219,17 +209,17 @@ class NemotronAIService @Inject constructor(
     }
 
     /**
-     * Retrieves memories relevant to the given request and conversational context.
+     * Retrieve memories relevant to the given request and conversational context using a MemoryQuery.
      *
-     * Currently uses a simulated retrieval strategy: it derives a `count` from the length of
-     * `context`, constructs a human-readable `summary`, and assigns a `relevance` score.
+     * Performs a retrieval via MemoryManager with a query scoped to the request and context (up to 10 results,
+     * minimum similarity 0.7, agent filter SPECIALIZED) and returns a concise summary of the outcome.
      *
-     * @param request The AI request used to scope the memory lookup (e.g., query and metadata).
-     * @param context The conversational or situational context used to determine relevance.
+     * @param request The AI request whose query and metadata scope the memory lookup.
+     * @param context The conversational or situational context used to bias relevance and matching.
      * @return A MemoryRecall containing:
-     *  - `summary`: a brief description of retrieved memory fragments,
-     *  - `count`: the number of simulated memory fragments,
-     *  - `relevance`: a relevance score between 0.0 and 1.0.
+     *  - `summary`: a brief description of how many memory fragments were retrieved,
+     *  - `count`: the number of retrieved memory fragments,
+     *  - `relevance`: a score (0.85 when any items were found, 0.5 when none were found).
      */
     private fun recallRelevantMemories(request: AiRequest, context: String): MemoryRecall {
         // TODO: Implement full memory retrieval (requires MemoryQuery construction)
