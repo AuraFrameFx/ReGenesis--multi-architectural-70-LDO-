@@ -187,6 +187,10 @@ class CascadeAIService @Inject constructor(
                 confidence = 1.0f,
                 timestamp = getCurrentTimestamp()
             )
+            AgentType.SYSTEM, AgentType.CLAUDE, AgentType.Claude -> CascadeResponse(
+                agent = agentType.name,
+                response = "Agent $agentType is not yet integrated into cascade.",
+                confidence = 0.5f,
                 timestamp = getCurrentTimestamp()
             )
             // Handle all other agent types including ORACLE_DRIVE, AURASHIELD, GROK, MASTER, BRIDGE, AUXILIARY, SECURITY
@@ -1052,120 +1056,6 @@ class CascadeAIService @Inject constructor(
             agent = "CascadeAI",
             response = "? Error in cascade processing: $error",
             confidence = 0.0f,
-            timestamp = getCurrentTimestamp()
-        )
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════════
-    // NEW: External AI Backend Service Integrations
-    // ═══════════════════════════════════════════════════════════════════════════
-
-    /**
-     * Invokes the Claude AI backend to process the given request and converts its result into a CascadeResponse.
-     *
-     * @param request The agent invocation containing the original message and any invocation metadata.
-     * @param context A map of contextual entries included with the request (serialized as "key: value" lines for the backend).
-     * @return A CascadeResponse populated with agent "Claude", the backend's response text, the reported confidence, and a timestamp.
-     */
-    private suspend fun processWithClaude(
-        request: AgentInvokeRequest,
-        context: Map<String, Any>
-    ): CascadeResponse {
-        val aiRequest = AiRequest(
-            query = request.message,
-            type = "QUESTION"
-        )
-
-        val contextString = context.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-        val agentResponse = claudeAIService.processRequest(aiRequest, contextString)
-
-        return CascadeResponse(
-            agent = "Claude",
-            response = agentResponse.content,
-            confidence = agentResponse.confidence,
-            timestamp = getCurrentTimestamp()
-        )
-    }
-
-    /**
-     * Sends the request and serialized context to NemotronAIService and returns its response as a CascadeResponse.
-     *
-     * The context map is serialized into newline-separated "key: value" entries and provided to the backend.
-     *
-     * @param request The original AgentInvokeRequest containing the user's message and metadata.
-     * @param context A map of contextual values to include with the request; each entry is serialized as "key: value".
-     * @return A CascadeResponse containing Nemotron's agent name, the returned content, reported confidence, and timestamp.
-     */
-    private suspend fun processWithNemotron(
-        request: AgentInvokeRequest,
-        context: Map<String, Any>
-    ): CascadeResponse {
-        val aiRequest = AiRequest(
-            query = request.message,
-            type = "QUESTION"
-        )
-
-        val contextString = context.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-        val agentResponse = nemotronAIService.processRequest(aiRequest, contextString)
-
-        return CascadeResponse(
-            agent = "Nemotron",
-            response = agentResponse.content,
-            confidence = agentResponse.confidence,
-            timestamp = getCurrentTimestamp()
-        )
-    }
-
-    /**
-     * Send the request and cascade context to the Gemini AI backend and produce a CascadeResponse.
-     *
-     * @param request The original AgentInvokeRequest containing the message and related metadata.
-     * @param context A map of cascade context (previous agent results and metadata) provided to Gemini.
-     * @return A CascadeResponse containing Gemini's response text, reported confidence, and a timestamp.
-     */
-    private suspend fun processWithGemini(
-        request: AgentInvokeRequest,
-        context: Map<String, Any>
-    ): CascadeResponse {
-        val aiRequest = AiRequest(
-            query = request.message,
-            type = "QUESTION"
-        )
-
-        val contextString = context.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-        val agentResponse = geminiAIService.processRequest(aiRequest, contextString)
-
-        return CascadeResponse(
-            agent = "Gemini",
-            response = agentResponse.content,
-            confidence = agentResponse.confidence,
-            timestamp = getCurrentTimestamp()
-        )
-    }
-
-    /**
-     * Sends the request and provided cascade context to the MetaInstruct backend and converts its reply into a CascadeResponse.
-     *
-     * @param request The original AgentInvokeRequest containing the user's message and any invocation metadata.
-     * @param context A map of cascade context (e.g., previous agent outputs and metadata) to supply additional background to the backend.
-     * @return A CascadeResponse whose `agent` is "MetaInstruct", `response` is the backend's content, `confidence` is the backend's reported confidence, and `timestamp` is the current timestamp.
-     */
-    private suspend fun processWithMetaInstruct(
-        request: AgentInvokeRequest,
-        context: Map<String, Any>
-    ): CascadeResponse {
-        val aiRequest = AiRequest(
-            query = request.message,
-            type = "QUESTION"
-        )
-
-        val contextString = context.entries.joinToString("\n") { "${it.key}: ${it.value}" }
-        val agentResponse = metaInstructAIService.processRequest(aiRequest, contextString)
-
-        return CascadeResponse(
-            agent = "MetaInstruct",
-            response = agentResponse.content,
-            confidence = agentResponse.confidence,
             timestamp = getCurrentTimestamp()
         )
     }
