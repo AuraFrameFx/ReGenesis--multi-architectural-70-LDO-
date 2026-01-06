@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import dev.aurakai.auraframefx.navigation.AppNavGraph
-import dev.aurakai.auraframefx.ui.components.BottomNavigationBar
 import dev.aurakai.auraframefx.ui.theme.AuraFrameFXTheme
 import dev.aurakai.auraframefx.ui.theme.ThemeViewModel
 
@@ -96,38 +95,18 @@ internal fun MainScreenContent(
     var showDigitalEffects by remember { mutableStateOf(true) }
     var command by remember { mutableStateOf("") }
 
-    Scaffold(
-        bottomBar = { BottomNavigationBar(navController = navController) }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            Row {
-                TextField(
-                    value = command,
-                    onValueChange = { command = it },
-                    label = { Text("Enter theme command") }
-                )
-                Button(onClick = { processThemeCommand(command) }) {
-                    Text("Apply")
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .let { base ->
+                if (showDigitalEffects) {
+                    base.digitalPixelEffect()
+                } else {
+                    base
                 }
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .let { base ->
-                        if (showDigitalEffects) {
-                            base.digitalPixelEffect()
-                        } else {
-                            base
-                        }
-                    }
-            ) {
-                AppNavGraph(navController = navController)
-            }
-        }
+    ) {
+        AppNavGraph(navController = navController)
     }
 }
 

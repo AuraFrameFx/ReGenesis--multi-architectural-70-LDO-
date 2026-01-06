@@ -137,9 +137,6 @@ fun ConstellationScreen(
 }
 
 /**
- * Renders the constellation visualization centered on an animated sword with pulsing nodes and orbiting particles.
- *
- * Displays connecting lines between constellation nodes and drives continuous pulse and rotation animations to animate node glow and particle motion.
  */
 @Composable
 private fun ConstellationCanvas() {
@@ -249,7 +246,6 @@ private fun ConstellationCanvas() {
             strokeWidth = 2f
         )
 
-        // Sword centerpiece will be overlaid as PNG image below
 
         // Draw constellation nodes with pulse effect
         nodes.forEach { nodePos ->
@@ -298,23 +294,11 @@ private fun ConstellationCanvas() {
         }
     }
 
-        // PNG Centerpiece Image Overlay
-        Image(
-            painter = painterResource(id = R.drawable.constellation_aura_sword),
-            contentDescription = "Aura Sword Constellation",
-            modifier = Modifier
-                .size(400.dp)
-                .scale(centerScale)
-                .alpha(pulseAlpha)
         )
     }
 }
 
 /**
- * Displays the Fusion Abilities sync UI with animated ability indicators and a glowing progress bar.
- *
- * Shows three named fusion ability indicators that pulse, an animated horizontal sync progress fill,
- * and a numeric "SYNC: X%" status that reflects the progress percentage.
  */
 @Composable
 private fun FusionSyncBar() {
@@ -392,11 +376,6 @@ private fun FusionSyncBar() {
 }
 
 /**
- * Renders a single fusion ability indicator consisting of a glowing dot and a label.
- *
- * @param name The displayed ability name.
- * @param glowAlpha Glow intensity for the dot and its outer aura (0.0 to 1.0).
- * @param color Base color used for the dot and label text.
  */
 @Composable
 private fun FusionAbilityIndicator(
