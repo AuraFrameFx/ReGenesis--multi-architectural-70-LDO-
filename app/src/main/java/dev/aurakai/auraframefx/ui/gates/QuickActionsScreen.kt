@@ -235,6 +235,13 @@ fun QuickActionsScreen() {
                     modifier = Modifier.padding(vertical = 16.dp),
                     color = Color.White,
                 )
+            Text(
+                text = category,
+                modifier = Modifier.padding(vertical = 16.dp),
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
 
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
