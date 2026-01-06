@@ -57,6 +57,13 @@ import dev.aurakai.auraframefx.ui.screens.MainScreen
 import dev.aurakai.auraframefx.ui.screens.UISettingsScreen
 import dev.aurakai.auraframefx.ui.screens.WorkingLabScreen
 
+/**
+ * Defines the application's navigation graph and registers all composable destinations used by the app.
+ *
+ * The provided NavHostController is used as the host for the NavHost and for performing navigation actions between routes.
+ *
+ * @param navController Controller that hosts navigation and executes route navigation actions.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavGraph(navController: NavHostController) {
@@ -148,14 +155,6 @@ fun AppNavGraph(navController: NavHostController) {
 
         composable(route = NavDestination.Constellation.route) {
             ConstellationScreen(navController = navController)
-        }
-
-        composable(route = NavDestination.GenesisConstellation.route) {
-            GenesisConstellationScreen(navController = navController)
-        }
-
-        composable(route = NavDestination.ClaudeConstellation.route) {
-            ClaudeConstellationScreen(navController = navController)
         }
 
         // ==================== ROM TOOLS ====================
