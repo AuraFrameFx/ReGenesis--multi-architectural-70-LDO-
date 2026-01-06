@@ -37,7 +37,9 @@ object TrinityModule {
 
 
     /**
+     * Provides a singleton instance of GenesisBridgeService that integrates multiple AI services with the Trinity Python backend.
      *
+     * @return A configured GenesisBridgeService singleton for application-wide use.
      */
     @Provides
     @Singleton

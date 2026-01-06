@@ -270,7 +270,14 @@ private fun DataStreamCanvas() {
 }
 
 /**
- * Draw mechanical wing/data stream centerpiece
+ * Renders a rotating, pulsing mechanical wing centerpiece with gradient wing segments, joint markers, and a layered central core.
+ *
+ * @param centerX X coordinate of the centerpiece center.
+ * @param centerY Y coordinate of the centerpiece center.
+ * @param color Base color used for wing gradients and the hub.
+ * @param accentColor Highlight color used for wing accents, joint markers, and the energy core.
+ * @param rotation Rotation angle in degrees applied to the wing segments.
+ * @param pulseAlpha Opacity multiplier in the range 0..1 that controls pulsing intensity for gradients and markers.
  */
 private fun DrawScope.drawMechanicalWing(
     centerX: Float,
@@ -308,6 +315,7 @@ private fun DrawScope.drawMechanicalWing(
 }
 
 /**
+ * DataStream Status Bar - Flow metrics
  */
 @Composable
 private fun DataStreamStatusBar() {
@@ -385,6 +393,7 @@ private fun DataStreamStatusBar() {
 }
 
 /**
+ * Individual stream channel indicator
  */
 @Composable
 private fun StreamChannelIndicator(

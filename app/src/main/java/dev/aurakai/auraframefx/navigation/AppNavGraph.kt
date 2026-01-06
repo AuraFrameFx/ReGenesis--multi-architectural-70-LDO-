@@ -69,6 +69,13 @@ import dev.aurakai.auraframefx.ui.screens.WorkingLabScreen
  *
  * @param navController Controller that hosts navigation and executes route navigation actions.
  */
+/**
+ * Registers the application's navigation graph on the provided NavHostController, mapping each route to its corresponding composable destination and wiring common navigation actions.
+ *
+ * Builds a NavHost with a start destination of NavDestination.Gates.route and registers destinations for main screens, agent hub, Oracle Drive, ROM tools, LSPosed integration, UI/UX design studio, help desk, Auras Lab, customization tools, and identity flows.
+ *
+ * @param navController The NavHostController used to perform navigation and back-stack operations for the registered destinations.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavGraph(navController: NavHostController) {
