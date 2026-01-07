@@ -31,12 +31,6 @@ class RealCascadeAIServiceAdapter @Inject constructor() : CascadeAIService {
         )
     }
 
-    /**
-     * Provide a Flow that emits a single AgentResponse for the given AI request.
-     *
-     * @param request The AI request to process.
-     * @return A Flow that emits one AgentResponse produced by processing the request with an empty context.
-     */
     fun streamRequest(request: AiRequest): Flow<AgentResponse> = flow {
         emit(processRequest(request, ""))
     }

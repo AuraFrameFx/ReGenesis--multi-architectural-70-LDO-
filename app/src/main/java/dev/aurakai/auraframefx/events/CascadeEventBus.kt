@@ -24,12 +24,6 @@ class CascadeEventBus @Inject constructor() {
         _events.tryEmit(event)
     }
 
-    /**
-     * Attempts to emit the given CascadeEvent into the internal event flow's buffer.
-     *
-     * @param event The CascadeEvent to publish.
-     * @return `true` if the event was accepted into the flow's buffer, `false` otherwise.
-     */
     fun tryEmit(event: CascadeEvent): Boolean {
         return _events.tryEmit(event)
     }

@@ -94,28 +94,7 @@ class GenesisBackedKaiAIService @Inject constructor(
         ))
     }
 
-    /**
-     * Returns a snapshot of the service's current security status.
-     *
-     * @return A map containing security status information.
-     */
-    override suspend fun monitorSecurityStatus(): Map<String, Any> {
-        return mapOf(
-            "status" to "active",
-            "threats_detected" to 0,
-            "last_scan" to System.currentTimeMillis(),
-            "firewall_status" to "enabled",
-            "intrusion_detection" to "active",
-            "confidence" to 0.98f,
-            "backend" to "genesis"
-        )
     }
 
-    /**
-     * Release service resources and reset initialization state.
-     */
-    override fun cleanup() {
-        eventBus.emit(MemoryEvent("KAI_CLEANUP", mapOf("timestamp" to System.currentTimeMillis())))
-        isInitialized = false
     }
 }
