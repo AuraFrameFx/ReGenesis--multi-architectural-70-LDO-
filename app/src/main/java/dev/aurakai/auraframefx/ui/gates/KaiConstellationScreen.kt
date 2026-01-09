@@ -314,6 +314,36 @@ private fun DrawScope.drawHexagonalShield(
     }
     path.close()
 
+    // Draw shield glow
+    drawPath(
+        path = path,
+        brush = Brush.radialGradient(
+            colors = listOf(
+                color.copy(alpha = pulseAlpha * 0.3f),
+                accentColor.copy(alpha = pulseAlpha * 0.2f),
+                Color.Transparent
+            ),
+            center = Offset(centerX, centerY),
+            radius = radius * 1.5f
+        )
+    )
+
+    // Draw shield border (alternating colors)
+    for (i in 0..5) {
+        val angle1 = (i * 60f - 30f) * (Math.PI / 180).toFloat()
+        val angle2 = ((i + 1) * 60f - 30f) * (Math.PI / 180).toFloat()
+        val x1 = centerX + radius * cos(angle1)
+        val y1 = centerY + radius * sin(angle1)
+        val x2 = centerX + radius * cos(angle2)
+        val y2 = centerY + radius * sin(angle2)
+
+        val segmentColor = if (i % 2 == 0) color else accentColor
+
+        drawLine(
+            color = segmentColor.copy(alpha = pulseAlpha),
+            start = Offset(x1, y1),
+            end = Offset(x2, y2),
+            strokeWidth = 8f
         )
     }
 

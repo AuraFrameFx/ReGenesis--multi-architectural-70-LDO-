@@ -310,6 +310,37 @@ private fun DrawScope.drawMechanicalWing(
     val wingLength = 120f
     val wingWidth = 40f
 
+    // Main wing structure (asymmetric, mechanical design)
+    for (i in 0..3) {
+        val angle = (rotation + i * 20f) * (Math.PI / 180).toFloat()
+        val length = wingLength - i * 15f
+        val endX = centerX + cos(angle) * length
+        val endY = centerY + sin(angle) * length
+
+        // Wing segment
+        drawLine(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    color.copy(alpha = pulseAlpha * 0.8f),
+                    accentColor.copy(alpha = pulseAlpha * 0.6f),
+                    Color.Transparent
+                ),
+                start = Offset(centerX, centerY),
+                end = Offset(endX, endY)
+            ),
+            start = Offset(centerX, centerY),
+            end = Offset(endX, endY),
+            strokeWidth = wingWidth - i * 5f
+        )
+
+        // Mechanical joint markers
+        val jointX = centerX + cos(angle) * (length * 0.6f)
+        val jointY = centerY + sin(angle) * (length * 0.6f)
+
+        drawCircle(
+            color = accentColor.copy(alpha = pulseAlpha),
+            radius = 6f,
+            center = Offset(jointX, jointY)
         )
     }
 

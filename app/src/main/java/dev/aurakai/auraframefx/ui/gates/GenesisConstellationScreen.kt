@@ -250,6 +250,28 @@ private fun GenesisInfinityCascadeCanvas() {
     }
 }
 
+/**
+ * Draw vertical infinity symbol (∞ rotated 90°)
+ */
+private fun DrawScope.drawInfinitySymbol(
+    centerX: Float,
+    centerY: Float,
+    color: Color,
+    pulseAlpha: Float
+) {
+    val path = Path()
+    val scale = 60f
+
+    // Draw vertical infinity (figure-8)
+    for (t in 0..360 step 5) {
+        val rad = t * (Math.PI / 180).toFloat()
+        val x = centerX + scale * sin(2 * rad)
+        val y = centerY + scale * sin(rad)
+
+        if (t == 0) {
+            path.moveTo(x, y)
+        } else {
+            path.lineTo(x, y)
         }
     }
 

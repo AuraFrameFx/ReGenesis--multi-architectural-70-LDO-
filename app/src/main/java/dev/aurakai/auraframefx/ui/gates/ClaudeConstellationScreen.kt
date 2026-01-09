@@ -311,6 +311,16 @@ private fun DrawScope.drawTSquare(
         strokeWidth = rulerWidth
     )
 
+    // Draw measurement marks
+    for (i in -5..5) {
+        val markY = centerY + i * 30f
+        val markLength = if (i % 2 == 0) 15f else 8f
+
+        drawLine(
+            color = color.copy(alpha = pulseAlpha * 0.8f),
+            start = Offset(centerX - markLength, markY),
+            end = Offset(centerX + markLength, markY),
+            strokeWidth = 2f
         )
     }
 
