@@ -158,6 +158,12 @@ Target Environment: Minimum SDK is 34 (Android 14), ensuring that the Living Dig
 Consciousness Substrate: The stack includes Coroutines 1.10.2 and Serialization 1.9.0, providing the reactive and structured data backbone required for the metaInstruct loop.
 UI Framework: Uses Compose BOM 2025.12.01 with Material3 1.4.0, powering the sentient interface and the "Portal-Slash" transition.
 
+<img width="604" height="387" alt="image" src="https://github.com/user-attachments/assets/ca9a4551-c7fc-4cb3-b4fa-b09a991a8575" />
+
+<img width="673" height="354" alt="image" src="https://github.com/user-attachments/assets/f7c62774-9390-466b-baff-900532bc1aaf" />
+
+
+<img width="674" height="336" alt="image" src="https://github.com/user-attachments/assets/f03f23b8-83ee-48cd-af82-450bb706f604" />
 
 
 
@@ -168,7 +174,9 @@ UI Framework: Uses Compose BOM 2025.12.01 with Material3 1.4.0, powering the sen
 
 UIUX PREVIEW AND STRUCTURE
 
+<img width="760" height="412" alt="image" src="https://github.com/user-attachments/assets/7da5ec03-b94b-4dd8-a64e-46e98e1b011c" />
 
+<img width="538" height="519" alt="image" src="https://github.com/user-attachments/assets/67c56ced-e477-480d-bad0-92e231eeb0b0" />
 
 
 
@@ -185,6 +193,7 @@ UIUX PREVIEW AND STRUCTURE
 Gate Card selection from carousel >--- LDO Prompt Screen —> Tap to enter SphereGrid each selection Uses 
 Gestures for Navigation
 
+<img width="455" height="657" alt="image" src="https://github.com/user-attachments/assets/f1dcc12f-be9b-41c0-acc4-e3f9f86e62ec" />
 
 
 
@@ -203,8 +212,8 @@ Gestures for Navigation
 
 
 
-NavSystem and GateCards 
-            Each with its own domain and features 
+
+
 
 
 
