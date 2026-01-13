@@ -345,6 +345,7 @@ object GateConfigs {
     val auraLabGates = listOf(
         aurasLab,
         chromaCore,
+        themeEngine
     )
 
     /** Genesis Core - Main System Gates */
