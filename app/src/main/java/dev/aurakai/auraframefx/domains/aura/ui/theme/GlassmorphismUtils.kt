@@ -1,8 +1,10 @@
 package dev.aurakai.auraframefx.domains.aura.ui.theme
 
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.blur
@@ -11,6 +13,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
 
 /**
  * 💎 Professional Glassmorphism Utilities
@@ -166,9 +169,35 @@ fun Modifier.neonPulse(
     glowColor: Color = NeonPink,
     cornerRadius: Dp = 12.dp
 ) = this.composed {
-    // TODO: Add animated pulsating glow effect
-    // For now, static glow
-    neonGlow(glowColor, 3.dp, cornerRadius)
+    val infiniteTransition = rememberInfiniteTransition(label = "neonPulse")
+
+    // Animate alpha for the "breathing" effect
+    val animatedAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.4f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    // Animate width for the "pulsing" effect
+    val animatedWidth by infiniteTransition.animateFloat(
+        initialValue = 2f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseWidth"
+    )
+
+    neonGlow(
+        glowColor = glowColor.withAlpha(animatedAlpha),
+        glowWidth = animatedWidth.dp,
+        cornerRadius = cornerRadius
+    )
 }
 
 /**
