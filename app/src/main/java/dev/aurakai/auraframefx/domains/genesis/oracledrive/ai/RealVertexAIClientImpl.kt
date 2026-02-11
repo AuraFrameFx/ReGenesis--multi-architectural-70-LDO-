@@ -1,6 +1,8 @@
 package dev.aurakai.auraframefx.domains.genesis.oracledrive.ai
 
 import com.google.ai.client.generativeai.GenerativeModel
+import android.graphics.BitmapFactory
+import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import dev.aurakai.auraframefx.domains.genesis.oracledrive.ai.config.VertexAIConfig
 import dev.aurakai.auraframefx.domains.genesis.oracledrive.ai.clients.VertexAIClient
@@ -131,10 +133,29 @@ class RealVertexAIClientImpl(
         AuraFxLogger.i(TAG, "RealVertexAIClient cleaned up")
     }
 
-    override suspend fun analyzeImage(imageData: ByteArray, prompt: String): String {
-        // TODO: Implement actual image analysis using GenerativeModel (support pending in this impl wrapper)
-        AuraFxLogger.warn(TAG, "Image analysis requested but not fully implemented in RealVertexAIClientImpl yet.")
-        return "Image analysis not implemented yet: ${imageData.size} bytes."
+    override suspend fun analyzeImage(imageData: ByteArray, prompt: String): String = withContext(Dispatchers.IO) {
+        try {
+            validatePrompt(prompt)
+            AuraFxLogger.debug(TAG, "Analyzing image (${imageData.size} bytes) with prompt: $prompt")
+
+            val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
+                ?: return@withContext "Failed to decode image data"
+
+            val inputContent = content {
+                image(bitmap)
+                text(prompt)
+            }
+
+            val response = generativeModel.generateContent(inputContent)
+            val result = response.text ?: "No analysis result returned from Gemini"
+
+            AuraFxLogger.debug(TAG, "Image analysis completed (${result.length} chars)")
+            result
+        } catch (e: Exception) {
+            AuraFxLogger.error(TAG, "Image analysis failed", e)
+            handleGenerationError(e)
+            "Error during image analysis: ${e.message}"
+        }
     }
 
     /**
