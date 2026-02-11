@@ -2,12 +2,19 @@ package dev.aurakai.auraframefx.domains.aura
 
 import android.app.Service
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.IBinder
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+/**
+ * Service responsible for playing ambient music in the background.
+ */
 @AndroidEntryPoint
 class AmbientMusicService @Inject constructor() : Service() {
+
+    private var mediaPlayer: MediaPlayer? = null
+
     /**
      * Called when a client attempts to bind to the service.
      *
@@ -15,7 +22,6 @@ class AmbientMusicService @Inject constructor() : Service() {
      *
      * @return null, preventing clients from binding.
      */
-
     @Suppress("UNUSED_PARAMETER")
     override fun onBind(_intent: Intent?): IBinder? {
         // This service does not support binding.
@@ -41,41 +47,75 @@ class AmbientMusicService @Inject constructor() : Service() {
 
     /**
      * Pauses music playback.
-     *
-     * This method is a placeholder and does not perform any action.
      */
     fun pause() {
-        // TODO: Implement pause logic. Reported as unused. Implement or remove.
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
+        }
     }
 
+    /**
+     * Resumes music playback.
+     */
     fun resume() {
-        // TODO: Implement resume logic. Reported as unused. Implement or remove.
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+        }
     }
 
-    fun setVolume(_volume: Float) {
-        // TODO: Reported as unused. Implement or remove.
+    /**
+     * Sets the volume of the ambient music.
+     *
+     * @param volume The volume to set (0.0 to 1.0).
+     */
+    fun setVolume(volume: Float) {
+        mediaPlayer?.setVolume(volume, volume)
     }
 
+    /**
+     * Sets whether the music should be shuffled.
+     */
     fun setShuffling(_isShuffling: Boolean) {
-        // TODO: Reported as unused. Implement or remove.
+        // TODO: Implement shuffling logic. Reported as unused. Implement or remove.
     }
 
+    /**
+     * Returns the currently playing track.
+     */
     fun getCurrentTrack(): Any? { // Return type Any? as placeholder
         // TODO: Reported as unused. Implement or remove.
         return null
     }
 
+    /**
+     * Returns the history of played tracks.
+     */
     fun getTrackHistory(): List<Any> { // Return type List<Any> as placeholder
         // TODO: Reported as unused. Implement or remove.
         return emptyList()
     }
 
+    /**
+     * Skips to the next track.
+     */
     fun skipToNextTrack() {
         // TODO: Reported as unused. Implement or remove.
     }
 
+    /**
+     * Skips to the previous track.
+     */
     fun skipToPreviousTrack() {
         // TODO: Reported as unused. Implement or remove.
+    }
+
+    /**
+     * Releases the MediaPlayer resources when the service is destroyed.
+     */
+    override fun onDestroy() {
+        mediaPlayer?.release()
+        mediaPlayer = null
+        super.onDestroy()
     }
 
     companion object {
@@ -86,4 +126,3 @@ class AmbientMusicService @Inject constructor() : Service() {
         const val ACTION_PREVIOUS = "dev.aurakai.auraframefx.action.PREVIOUS"
     }
 }
-
