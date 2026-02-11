@@ -29,5 +29,13 @@ data class ApplyThemeResponse(
     val message: String
 )
 
+/**
+ * Request object for updating the FCM token.
+ */
+@Serializable
+data class FcmTokenRequest(
+    val fcmToken: String
+)
+
 // Removed duplicate interfaces UserApi, AIAgentApi, ThemeApi
 
