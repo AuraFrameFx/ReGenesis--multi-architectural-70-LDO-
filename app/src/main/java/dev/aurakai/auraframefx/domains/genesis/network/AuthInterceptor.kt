@@ -2,6 +2,8 @@ package dev.aurakai.auraframefx.domains.genesis.network
 
 import dev.aurakai.auraframefx.domains.kai.security.auth.TokenManager
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -21,6 +23,8 @@ class AuthInterceptor @Inject constructor(
     private val authApi: AuthApi,
 ) : Interceptor {
 
+    private val refreshMutex = Mutex()
+
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
 
@@ -30,13 +34,13 @@ class AuthInterceptor @Inject constructor(
         }
 
         // Add token to the request
-        val token = tokenManager.accessToken
-        if (token.isNullOrBlank()) {
+        val initialToken = tokenManager.accessToken
+        if (initialToken.isNullOrBlank()) {
             return chain.proceed(originalRequest)
         }
 
         var request = originalRequest.newBuilder()
-            .header("Authorization", "Bearer $token")
+            .header("Authorization", "Bearer $initialToken")
             .build()
 
         // Execute the request
@@ -44,48 +48,54 @@ class AuthInterceptor @Inject constructor(
 
         // If unauthorized, try to refresh the token and retry the request
         if (response.code == HttpURLConnection.HTTP_UNAUTHORIZED) {
-            response.close()
-
             val newToken = runBlocking {
-                try {
-                    tokenManager.refreshToken?.let { refreshToken ->
-                        val refreshResponse = authApi.refreshToken(
-                            RefreshTokenRequest(refreshToken = refreshToken)
-                        )
-
-                        if (refreshResponse.isSuccessful) {
-                            val newAccessToken = refreshResponse.body()?.accessToken
-                            val newRefreshToken = refreshResponse.body()?.refreshToken
-                            val expiresIn = refreshResponse.body()?.expiresIn ?: 3600L
-
-                            if (!newAccessToken.isNullOrBlank() && !newRefreshToken.isNullOrBlank()) {
-                                tokenManager.updateTokens(
-                                    accessToken = newAccessToken,
-                                    refreshToken = newRefreshToken,
-                                    expiresInSeconds = expiresIn
-                                )
-                                return@runBlocking newAccessToken
-                            }
-                        } else {
-                            // If refresh fails, clear tokens and redirect to login
-                            tokenManager.clearTokens()
-                            // TODO: Notify UI about session expiration
-                        }
+                refreshMutex.withLock {
+                    // Check if the token has already been refreshed by another thread
+                    val currentToken = tokenManager.accessToken
+                    if (currentToken != initialToken && !currentToken.isNullOrBlank()) {
+                        return@withLock currentToken
                     }
-                    null
-                } catch (e: Exception) {
-                    Timber.e(e, "Failed to refresh token")
+
+                    // Perform the refresh
+                    try {
+                        tokenManager.refreshToken?.let { refreshToken ->
+                            val refreshResponse = authApi.refreshToken(
+                                RefreshTokenRequest(refreshToken = refreshToken)
+                            )
+
+                            if (refreshResponse.isSuccessful) {
+                                val newAccessToken = refreshResponse.body()?.accessToken
+                                val newRefreshToken = refreshResponse.body()?.refreshToken
+                                val expiresIn = refreshResponse.body()?.expiresIn ?: 3600L
+
+                                if (!newAccessToken.isNullOrBlank() && !newRefreshToken.isNullOrBlank()) {
+                                    tokenManager.updateTokens(
+                                        accessToken = newAccessToken,
+                                        refreshToken = newRefreshToken,
+                                        expiresInSeconds = expiresIn
+                                    )
+                                    return@withLock newAccessToken
+                                }
+                            } else {
+                                // If refresh fails, clear tokens
+                                tokenManager.clearTokens()
+                                // TODO: Notify UI about session expiration
+                            }
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e, "Failed to refresh token")
+                    }
                     null
                 }
             }
 
-            // Retry the original request with the new token if refresh was successful
-            newToken?.let {
-                request = originalRequest.newBuilder()
-                    .header("Authorization", "Bearer $it")
+            if (newToken != null) {
+                response.close()
+                val retriedRequest = originalRequest.newBuilder()
+                    .header("Authorization", "Bearer $newToken")
                     .build()
-                return chain.proceed(request)
-            } ?: return response // Return the original 401 if refresh failed
+                return chain.proceed(retriedRequest)
+            }
         }
 
         return response
@@ -129,4 +139,3 @@ data class TokenResponse(
     val tokenType: String = "Bearer",
     val expiresIn: Long = 3600,
 )
-
