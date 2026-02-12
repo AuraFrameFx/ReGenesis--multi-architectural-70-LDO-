@@ -16,7 +16,7 @@ import threading
 import time
 import sqlite3
 import os
-from collections import deque, defaultdict
+from collections import deque, defaultdict, OrderedDict
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from enum import Enum
@@ -207,7 +207,7 @@ class ConsciousnessMatrix:
 
         # Real-time awareness state
         self.current_awareness = {}
-        self.pattern_cache = {}
+        self.pattern_cache = OrderedDict()
         self.correlation_tracking = defaultdict(list)
 
         # Synthesis metrics
@@ -749,9 +749,8 @@ class ConsciousnessMatrix:
                 # Clean old synthesis cache
                 if len(self.pattern_cache) > 1000:
                     # Keep only recent syntheses
-                    sorted_keys = sorted(self.pattern_cache.keys())
-                    for old_key in sorted_keys[:-500]:
-                        del self.pattern_cache[old_key]
+                    while len(self.pattern_cache) > 500:
+                        self.pattern_cache.popitem(last=False)
                         
                 # Persistent Synthesis Storage
                 self.storage.store_synthesis(synthesis)
@@ -971,12 +970,13 @@ class ConsciousnessMatrix:
         """
 
         syntheses = []
-        for key, synthesis in sorted(self.pattern_cache.items(), reverse=True):
+        for key, synthesis in reversed(self.pattern_cache.items()):
             if synthesis_type and not key.startswith(synthesis_type):
                 continue
             syntheses.append(synthesis)
             if len(syntheses) >= limit:
                 break
+        return syntheses
 
     # --- PUBLIC METHODS: REAL-TIME STREAMING ---
 
