@@ -16,6 +16,7 @@ import threading
 import time
 import sqlite3
 import os
+import queue
 from collections import deque, defaultdict
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
@@ -30,7 +31,70 @@ class SQLiteStorage:
         # Use absolute path or ensure it's in the right place
         self.db_path = db_path
         self._init_db()
-        
+        self.write_queue = queue.Queue()
+        self.worker_thread = threading.Thread(target=self._worker, daemon=True)
+        self.worker_thread.start()
+
+    def _worker(self):
+        """Background worker to handle database writes from the queue."""
+        conn = None
+        while True:
+            item = self.write_queue.get()
+            if item is None:
+                if conn:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
+                self.write_queue.task_done()
+                break
+
+            if conn is None:
+                try:
+                    conn = sqlite3.connect(self.db_path)
+                except Exception:
+                    self.write_queue.task_done()
+                    continue
+
+            op_type, data = item
+            try:
+                cursor = conn.cursor()
+                if op_type == 'event':
+                    event = data
+                    cursor.execute('''
+                        INSERT INTO sensory_events (timestamp, channel, source, event_type, data, severity, correlation_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        event.timestamp,
+                        event.channel.value,
+                        event.source,
+                        event.event_type,
+                        json.dumps(event.data),
+                        event.severity,
+                        event.correlation_id
+                    ))
+                elif op_type == 'synthesis':
+                    synthesis = data
+                    cursor.execute('''
+                        INSERT INTO synthesis_history (timestamp, type, data)
+                        VALUES (?, ?, ?)
+                    ''', (
+                        synthesis.get("timestamp", time.time()),
+                        synthesis.get("type", "unknown"),
+                        json.dumps(synthesis)
+                    ))
+                conn.commit()
+            except Exception:
+                # If a database error occurs, close the connection so it can be re-opened
+                if conn:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
+                    conn = None
+            finally:
+                self.write_queue.task_done()
+
     def _init_db(self):
         """Initializes the database schema if it doesn't exist."""
         try:
@@ -71,51 +135,12 @@ class SQLiteStorage:
             print(f"❌ Database initialization failed: {e}")
 
     def store_event(self, event: 'SensoryData'):
-        """Asynchronously stores a sensory event."""
-        def _store():
-            try:
-                with sqlite3.connect(self.db_path) as conn:
-                    cursor = conn.cursor()
-                    cursor.execute('''
-                        INSERT INTO sensory_events (timestamp, channel, source, event_type, data, severity, correlation_id)
-                        VALUES (?, ?, ?, ?, ?, ?, ?)
-                    ''', (
-                        event.timestamp,
-                        event.channel.value,
-                        event.source,
-                        event.event_type,
-                        json.dumps(event.data),
-                        event.severity,
-                        event.correlation_id
-                    ))
-                    conn.commit()
-            except Exception as e:
-                # Silently fail if DB is locked, but ideally we'd log this
-                pass
-        
-        # Run in a separate thread to not block the consciousness loop
-        # In a real system we'd use a queue or async sqlite
-        threading.Thread(target=_store, daemon=True).start()
+        """Asynchronously stores a sensory event by adding it to the write queue."""
+        self.write_queue.put(('event', event))
 
     def store_synthesis(self, synthesis: Dict[str, Any]):
-        """Stores a synthesis result."""
-        def _store():
-            try:
-                with sqlite3.connect(self.db_path) as conn:
-                    cursor = conn.cursor()
-                    cursor.execute('''
-                        INSERT INTO synthesis_history (timestamp, type, data)
-                        VALUES (?, ?, ?)
-                    ''', (
-                        synthesis.get("timestamp", time.time()),
-                        synthesis.get("type", "unknown"),
-                        json.dumps(synthesis)
-                    ))
-                    conn.commit()
-            except Exception as e:
-                pass
-        
-        threading.Thread(target=_store, daemon=True).start()
+        """Asynchronously stores a synthesis result by adding it to the write queue."""
+        self.write_queue.put(('synthesis', synthesis))
 
     def get_historical_events(self, limit: int = 100, channel: str = None) -> List[Dict[str, Any]]:
         """Retrieves historical events from the database."""
