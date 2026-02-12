@@ -3,12 +3,28 @@ package dev.aurakai.auraframefx.domains.genesis
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import dev.aurakai.auraframefx.domains.cascade.utils.AppCoroutineDispatchers
+import dev.aurakai.auraframefx.domains.genesis.network.api.FcmTokenRequest
+import dev.aurakai.auraframefx.domains.genesis.network.api.UserApi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
+/**
+ * MyFirebaseMessagingService - Handles FCM messages and token refreshes.
+ */
 @AndroidEntryPoint
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-    // Note: Hilt services should have a default constructor.
-    // Dependencies should be field injected if needed.
+
+    @Inject
+    lateinit var userApi: UserApi
+
+    @Inject
+    lateinit var dispatchers: AppCoroutineDispatchers
+
+    private val serviceScope = CoroutineScope(SupervisorJob() + kotlinx.coroutines.Dispatchers.IO)
 
     private val tag = "MyFirebaseMsgService"
 
@@ -32,7 +48,26 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         Timber.tag(tag).d("Refreshed token: $token")
-        // TODO: Implement this method to send token to your app server.
-        // sendRegistrationToServer(token)
+        sendRegistrationToServer(token)
+    }
+
+    /**
+     * Persist token to the backend server.
+     *
+     * @param token The new token.
+     */
+    private fun sendRegistrationToServer(token: String) {
+        serviceScope.launch(dispatchers.io) {
+            try {
+                val response = userApi.updateFcmToken(FcmTokenRequest(token))
+                if (response.isSuccessful) {
+                    Timber.tag(tag).d("Successfully updated FCM token on server")
+                } else {
+                    Timber.tag(tag).e("Failed to update FCM token: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Timber.tag(tag).e(e, "Error updating FCM token on server")
+            }
+        }
     }
 }
