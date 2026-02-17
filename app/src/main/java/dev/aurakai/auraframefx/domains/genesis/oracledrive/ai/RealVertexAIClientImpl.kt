@@ -136,7 +136,8 @@ class RealVertexAIClientImpl(
     override suspend fun analyzeImage(imageData: ByteArray, prompt: String): String = withContext(Dispatchers.IO) {
         try {
             validatePrompt(prompt)
-            AuraFxLogger.debug(TAG, "Analyzing image (${imageData.size} bytes) with prompt: $prompt")
+            val promptMetadata = "length=${prompt.length}"
+            AuraFxLogger.debug(TAG, "Analyzing image (${imageData.size} bytes) with prompt metadata: $promptMetadata")
 
             val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.size)
                 ?: return@withContext "Failed to decode image data"
