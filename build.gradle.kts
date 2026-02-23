@@ -17,7 +17,7 @@ plugins {
     id("com.android.library") version "9.1.0-alpha09" apply false
 
     // Other plugins - Updated to latest stable versions
-    id("com.google.dagger.hilt.android") version "2.59.1" apply false
+    id("com.google.dagger.hilt.android") version "2.59.2" apply false
     id("com.google.devtools.ksp") version "2.3.5" apply false
     id("com.google.gms.google-services") version "4.4.4" apply false
     id("com.google.firebase.crashlytics") version "3.0.6" apply false
